@@ -119,4 +119,48 @@ def run_command(command):
     except:
             output="Failed!"
     
-    return output    
+    return output
+
+def client_handler(client_socket):
+    global upload
+    global execute
+    global command
+    
+    if len(upload_destination):
+        file_buffer=""
+        while True:
+            data=client_sender/recv(1024)
+            if len(data)==0:
+                break
+            else:
+                file_buffer+=data
+        try:
+            file_descriptor=open(upload_destination,"wb")
+            file_descriptor.write(file_buffer)
+            file_descriptor.close()
+            
+            cilent_socket.send(
+            "Success"
+            )
+            
+        except:
+            client_socket.send(
+            "Failed"
+            )
+            
+    if len(execute):
+        output=run_command(execute)
+        
+        client_socket.send(output)
+        
+    if command:
+        prompt="<HOGE>"
+        client_socket(prompt)
+        
+        while True:
+            cmd_buffer=""
+            while "\n" not in cmd_buffer:
+                cmd_buffer+=client_socket.recv(1024)
+            response=run_command(cmd_buffer)
+            response+=prompt
+            client_socket.send(response)
