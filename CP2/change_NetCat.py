@@ -15,7 +15,7 @@ upload_destination=""
 port=0
 
 def usage():
-    print "BHP Net tool"
+    print "BHC Net Tool"
     sys.exit(0)
 
 def main():
@@ -23,10 +23,7 @@ def main():
     global port
     global execute
     global command
-    global upload
     global upload_destination
-    
-    
     global target
     
     if not len(sys.argv[1:]):
