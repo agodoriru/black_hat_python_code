@@ -17,12 +17,20 @@ target=""
 upload_destination=""
 port=0
 
-#show how to use
-def usage():
-    print
-    print
-    print
-    print        
+
+#show banner
+def banner():
+    print "     #####      ##   #####                                        ##        "
+    print "    ##  ##     ##   ##   ###        ##         ###        ###     ##        "
+    print "   ##   ##    ##  ###      ##     ######     ##  ##    ##  ##    ##         "
+    print "  ##    ##   ##  ###                ##      ##    ##  ##    ##  ##          "   
+    print "  ##    ##  ##    ##      ##       ##  ##  ##     ## ##     ##  ##          "
+    print " ##     ## ##     ##    ###        ##  ##   ##   ##   ##   ##  ##           "
+    print " ##     ####       #####          #######    ####      ####    ##           "
+    print ""
+    #print ""
+    #print ""
+    print ""
     print "              ####   #####      ####     #####    ####     #####      ###   #####   ##     ##   "
     print "             #####  ##  ###    ##  ##   ##   ##  ##  ##    ##  ##   ## ##   ##  ##  ##    ##    " 
     print "            ##  ## ###        ## #  ## ##    ## ## #  ##  ######      ##   ######   ##   ##     "
@@ -30,25 +38,31 @@ def usage():
     print "          ##    ##  ##  ## ##  ##  ## ##    ##   ##  ##  ##    ##    ##    ##   ##  ## ##       "
     print "          ##    ##   ####  ##   #### ########     ####   ##     ## ###### ##     ## ####        "
     print
-    print
-    print
-    print
-    print "BHC Net Tool"
+    sys.exit(0)
+    
+#show how to use
+def usage():
+    print "NC tool"
     print "usage:BHC.py -t [target_host] -p [port]"
+    print " -l --listen"
+    print " -e --execute"
+    print " -c --command"
+    print " -u --upload"
+    print 
+    print 
     print
-    print
-    print
-    print
-    print
-    print
-    print
-    print
-    print
-    print
+    print "-h --help       - show help"
+    print "-ex --example   - show example"
+    sys.exit(0)
+
+#show sample use
+def sample():
+    print "HOGE"
     sys.exit(0)
 
 #main func
 def main():
+    
     global listen
     global port
     global execute
@@ -56,13 +70,15 @@ def main():
     global upload_destination
     global target
     
+    #no paramater
     if not len(sys.argv[1:]):
         usage()
-        
+    
+    #proccess in command-line variable 
     try:
         opts, args=getopt.getopt(sys.argv[1:],
-                                 "hle:t:p:cu:",
-                                 ["help","listen","execute=","target=","port=","command","upload="])
+                                 "hsble:t:p:cu:b:",
+                                 ["help","sample","banner","listen","execute=","target=","port=","command","upload="])
     
     except getopt.GetoptError as err:
             print str(err)
@@ -71,6 +87,10 @@ def main():
     for o,a in opts:
         if o in ("-h","--help"):
             usage()
+        elif o in ("-s","--sample"):
+            sample()
+        elif o in ("-b","--banner"):
+            banner()
         elif o in ("-l","--listen"):
             listen=True
         elif o in ("-e","--execute"):
@@ -84,6 +104,7 @@ def main():
         elif o in  ("-p","--port"):
             port=int(a)
         
+        #Exception-handling
         else:
             assert False,"Unhandled Option"
         
@@ -91,7 +112,8 @@ def main():
     if not listen and len(target) and port > 0:
         buffer=sys.stdin.read()
         client_sender(buffer)
-        
+    
+    #ready for connection
     if listen:
         server_loop()
 
@@ -124,14 +146,16 @@ def client_sender(buffer):
                 client.send(buffer)
                 
     except:
-        print "[*] Exception! Exiting."    
+        print "[*] Exception! Exiting. ..."    
         client.close()
         
 def server_loop():
     global target
     
+    #no IP_address -> stand by all interface
     if not len(target):
         target="0.0.0.0"
+        
     server=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
     server.bind((target,port))
     
@@ -147,7 +171,9 @@ def server_loop():
 def run_command(command):
     command=command.rstrip()
     
+    
     try:
+        command=command+"\n"
         output=subprocess.check_output(
         command,
         stderr=subprocess.STDOUT,
@@ -155,7 +181,7 @@ def run_command(command):
         )
         
     except:
-            output="Failed!"
+            output="Failed to execute command\n"
     
     return output
 
@@ -193,7 +219,7 @@ def client_handler(client_socket):
         client_socket.send(output)
         
     if command:
-        prompt="<HOGE:#> "
+        prompt="<HOGE:#>"
         client_socket.send(prompt)
         
         while True:
