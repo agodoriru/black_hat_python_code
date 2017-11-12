@@ -1,11 +1,14 @@
+#!/usr/bin/env python
 # -*- coding utf-8 -*-
 
+#import library
 import sys
 import socket
 import getopt
 import threading
 import subprocess
 
+#define variable
 listen=False
 command=False
 upload=""
@@ -14,10 +17,37 @@ target=""
 upload_destination=""
 port=0
 
+#show how to use
 def usage():
+    print
+    print
+    print
+    print        
+    print "              ####   #####      ####     #####    ####     #####      ###   #####   ##     ##   "
+    print "             #####  ##  ###    ##  ##   ##   ##  ##  ##    ##  ##   ## ##   ##  ##  ##    ##    " 
+    print "            ##  ## ###        ## #  ## ##    ## ## #  ##  ######      ##   ######   ##   ##     "
+    print "            ###### ###  ##### ##  # ## ##    ## ##  # ##  ##  ##      ##   ##  ##   ##  ##      "
+    print "          ##    ##  ##  ## ##  ##  ## ##    ##   ##  ##  ##    ##    ##    ##   ##  ## ##       "
+    print "          ##    ##   ####  ##   #### ########     ####   ##     ## ###### ##     ## ####        "
+    print
+    print
+    print
+    print
     print "BHC Net Tool"
+    print "usage:BHC.py -t [target_host] -p [port]"
+    print
+    print
+    print
+    print
+    print
+    print
+    print
+    print
+    print
+    print
     sys.exit(0)
 
+#main func
 def main():
     global listen
     global port
@@ -32,8 +62,8 @@ def main():
     try:
         opts, args=getopt.getopt(sys.argv[1:],
                                  "hle:t:p:cu:",
-                                 ["help","listen","execute=","target=","port=","command","upload="]
-                                 )
+                                 ["help","listen","execute=","target=","port=","command","upload="])
+    
     except getopt.GetoptError as err:
             print str(err)
             usage()
@@ -43,7 +73,16 @@ def main():
             usage()
         elif o in ("-l","--listen"):
             listen=True
-        
+        elif o in ("-e","--execute"):
+            execute=a
+        elif o in ("-c","--commandshell"):
+            command=True
+        elif o in ("-u","--upload"):
+            upload_destination=a
+        elif o in ("-t","--target"):
+            target=a
+        elif o in  ("-p","--port"):
+            port=int(a)
         
         else:
             assert False,"Unhandled Option"
@@ -54,9 +93,7 @@ def main():
         client_sender(buffer)
         
     if listen:
-        server_loop
-    
-main()
+        server_loop()
 
 def client_sender(buffer):
     client=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
@@ -76,9 +113,9 @@ def client_sender(buffer):
                     recv_len=len(data)
                     response+=data
                     
-                    
                     if recv_len<4096:
                         break
+                    
                 print response
                 
                 buffer=raw_input("")
@@ -101,10 +138,10 @@ def server_loop():
     server.listen(5)
     
     while True:
-        client_socket,addr=server.accept()
+        client_socket, addr =server.accept()
         
         client_thread=threading.Thread(
-            target=cliebt_handler,args=(client_socket,))
+            target=client_handler,args=(client_socket,))
         client_thread.start()
 
 def run_command(command):
@@ -112,7 +149,11 @@ def run_command(command):
     
     try:
         output=subprocess.check_output(
-        command,stderr=subprocess.STDOUT,shell=True)
+        command,
+        stderr=subprocess.STDOUT,
+        shell=True
+        )
+        
     except:
             output="Failed!"
     
@@ -131,6 +172,7 @@ def client_handler(client_socket):
                 break
             else:
                 file_buffer+=data
+                
         try:
             file_descriptor=open(upload_destination,"wb")
             file_descriptor.write(file_buffer)
@@ -151,13 +193,17 @@ def client_handler(client_socket):
         client_socket.send(output)
         
     if command:
-        prompt="<HOGE>"
-        client_socket(prompt)
+        prompt="<HOGE:#> "
+        client_socket.send(prompt)
         
         while True:
             cmd_buffer=""
             while "\n" not in cmd_buffer:
                 cmd_buffer+=client_socket.recv(1024)
+                
             response=run_command(cmd_buffer)
             response+=prompt
             client_socket.send(response)
+            
+
+main()
