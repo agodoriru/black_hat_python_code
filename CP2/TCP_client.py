@@ -9,7 +9,7 @@ client=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 
 client.connect((target_host,target_port))
 
-client.send("GET / HTTP/1.1\r\nHost:unkoo\r\n\r\n")
+client.send("GET / HTTP/1.1\r\nHost:HOGE\r\n\r\n")
 
 response=client.recv(4096)
 

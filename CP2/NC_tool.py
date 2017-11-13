@@ -57,7 +57,13 @@ def usage():
 
 #show sample use
 def sample():
-    print "HOGE"
+    print "sample case:"
+    print "nc_tool.py -t 192.168.0.0 -p 9999 -l -c"
+    print "nc_tool.py -t 192.168.0.0 -p 9999 -l -u c:\\target.exe"
+    print "nc_tool.py -t 192.168.0.0 -p 9999 -l -e \"cat /etc/passwd\""
+    print "echo 'ABCD' | ./nc_tool.py -t 192.168.0.0 -p 9999"
+    print ""
+    print ""
     sys.exit(0)
 
 #main func
@@ -80,11 +86,13 @@ def main():
                                  "hsble:t:p:cu:b:",
                                  ["help","sample","banner","listen","execute=","target=","port=","command","upload="])
     
+    #when error occur
     except getopt.GetoptError as err:
             print str(err)
             usage()
             
     for o,a in opts:
+        
         if o in ("-h","--help"):
             usage()
         elif o in ("-s","--sample"):
@@ -167,11 +175,11 @@ def server_loop():
         client_thread=threading.Thread(
             target=client_handler,args=(client_socket,))
         client_thread.start()
+        
 
 def run_command(command):
     command=command.rstrip()
-    
-    
+            
     try:
         command=command+"\n"
         output=subprocess.check_output(
@@ -182,7 +190,7 @@ def run_command(command):
         
     except:
             output="Failed to execute command\n"
-    
+
     return output
 
 def client_handler(client_socket):
