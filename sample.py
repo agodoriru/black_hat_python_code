@@ -1,3 +1,6 @@
+#! /usr/tmp/env python
+# -*- coding:utf-8 -*-
+
 def sum(number_one,number_two):
     number_one_int=convert_integer(number_one)
     number_two_int=convert_integer(number_two)
@@ -11,5 +14,7 @@ def convert_integer(number_string):
     return converted_integer
 
 answer=sum("1","2")
+
+print sum(1,2)
 
 print("Hello")
