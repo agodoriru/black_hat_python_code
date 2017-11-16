@@ -55,8 +55,8 @@ def poison_target(gateway_ip,gateway_mac,target_ip,target_mac,stop_event):
 
 
 interface="eth0"
-target_ip="192.168.11.11"
-gateway_ip="192.168.11.1"
+target_ip="0.0.0.0"
+gateway_ip="0.0.0.0"
 packet_count=1000
 conf.iface=interface
 
