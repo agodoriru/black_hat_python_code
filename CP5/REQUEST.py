@@ -2,7 +2,7 @@
 
 import urllib2
 
-url="http://www.tus.ac.jp"
+url=""
 
 headers={}
 headers['User-agent']="Googlebot"

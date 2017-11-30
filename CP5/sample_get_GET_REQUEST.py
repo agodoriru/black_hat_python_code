@@ -3,6 +3,6 @@
 
 import urllib2
 
-body=urllib2.urlopen("http://www.tus.ac.jp")
+body=urllib2.urlopen("http://")
 
 print body.read()
